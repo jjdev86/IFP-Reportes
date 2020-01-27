@@ -1,0 +1,32 @@
+{
+  "name": "ifp-reportes",
+  "version": "1.0.0",
+  "description": "this app allows church members to submit their weekly meeting reports",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jjdev86/IFP-Reportes.git"
+  },
+  "keywords": [
+    "grupo",
+    "de",
+    "amistad",
+    "celula",
+    "celula",
+    "familiar",
+    "reunion",
+    "familar"
+  ],
+  "author": "Jose Valadez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jjdev86/IFP-Reportes/issues"
+  },
+  "homepage": "https://github.com/jjdev86/IFP-Reportes#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.7"
+  }
+}
