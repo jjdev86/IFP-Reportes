@@ -1,12 +1,12 @@
-DROP DATABASE IF EXISTS `GDAs`;
-CREATE DATABASE `GDAs`;
-USE `GDAs`;
+DROP DATABASE IF EXISTS `GDA`;
+CREATE DATABASE `GDA`;
+USE `GDA`;
 
 CREATE TABLE `User` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`email` varchar(45) NOT NULL,
-	`role` varchar(15) NOT NULL,
 	`password` BINARY(60) NOT NULL,
+	`role` varchar(15) NOT NULL,
 	`first_name` varchar(255) NOT NULL,
 	`last_name` varchar(255) NOT NULL,
 	`phone_number` varchar(10) NOT NULL,
