@@ -2,9 +2,10 @@
   "name": "ifp-reportes",
   "version": "1.0.0",
   "description": "this app allows church members to submit their weekly meeting reports",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "npm run start"
+    "test": "npm run start",
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,9 @@
   "homepage": "https://github.com/jjdev86/IFP-Reportes#readme",
   "dependencies": {
     "bcrypt": "^3.0.7",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "morgan": "^1.9.1",
     "mysql": "^2.17.1"
   }
 }
