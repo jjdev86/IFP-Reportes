@@ -42,26 +42,43 @@ const createUser = async user => {
   }
 };
 
-const validateUser = async user => {
+const retrivePassword = async user => {
   // get password from db
   // SELECT CONVERT(column USING utf8)
   const query = `SELECT CONVERT (password USING utf8) password from User
                   WHERE email = '${user.email}'`;
-  const hash = await pool.query(query);
-
-  // compare and validate
+  let hash = await pool.query(query);
   try {
-    if (comparePassword(user.password, hash[0].password)) {
-      console.log(`validated`);
+    if (hash.length > 0) {
+      return hash[0].password;
     } else {
-      console.log("password not valid");
+      return hash = undefined;
     }
-  } catch (err) {
+  }catch(err) {
     console.log(err);
+    return err;
   }
+
+};
+
+const deleteUser = async id => {
+  let isDeleted;
+  let query = `DELETE FROM user
+                WHERE id = ${id}`;
+  let removed = await pool.query(query);
+  // console.log(removed.affectedRows, `line 69`)
+  if (removed.affectedRows == 1) {
+    console.log(removed.affectedRows, `line 74`)
+    isDeleted = true;
+  } else {
+    console.log(removed.affectedRows, `line 74`)
+    isDeleted = false;
+  }
+  return isDeleted;
 };
 
 module.exports = {
   createUser,
-  validateUser
+  retrivePassword,
+  deleteUser
 };

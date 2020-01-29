@@ -1,11 +1,11 @@
-const { createUser, validateUser } = require("../model/user");
+const { createUser, retrivePassword, deleteUser } = require("../model/user");
 const { encrypt, comparePassword } = require("../lib/bcrypt");
 
 exports.create_user = async (req, res) => {
   // creates new user
   const hash = await encrypt(req.body.password);
   try {
-    let user = ({ email, role, first_nae, last_name, phone_number } = req.body);
+    let user = ({ email, role, first_name, last_name, phone_number } = req.body);
     user.password = hash;
     // insert records to db
     await createUser(user);
@@ -20,10 +20,51 @@ exports.create_user = async (req, res) => {
   }
 };
 
-exports.user_login = (req, res) => {
-  // verify user login
+exports.user_login = async (req, res) => {
+  // get password from db
+  let password = await retrivePassword(req.body);
+  try {
+    // compare user input to db password
+    if (password) {
+      let isAuthenticated = await comparePassword(req.body.password, password);
+      if (isAuthenticated) {
+        res.status(200).json({
+          message: 'user aunthenticated'
+        });
+      } else {
+        res.status(401).json({
+          error: 'Invalid email address and password combination'
+        });
+      }
+    } else {
+      res.status(401).json({
+        error: 'Invalid email address and password combination'
+      });
+    }
+  }catch(err) {
+    res.status(500).json({
+      error: err
+    });
+  }
+
 };
 
-exports.delete_user = (req, res) => {
+exports.delete_user = async (req, res) => {
   // delete user login
+
+  let response = await deleteUser(Number(req.body.id));
+  try {
+    res.status(200).json({
+      "status": {
+        error: false,
+        code: 200,
+        type: "sucess",
+        message: "Success"
+      }
+    });
+  }catch(err) {
+    res.status(500).json({
+      error: err
+    });
+  }
 };

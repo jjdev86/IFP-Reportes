@@ -46,7 +46,7 @@ app.use("/user", userRoutes);
 // app.use("/reports", reportRoutes);
 
 app.use((req, res, next) => {
-  const error = new Error("Not found");
+  const error = new Error("Route Not found");
   error.status = 404;
   next(error);
 });
