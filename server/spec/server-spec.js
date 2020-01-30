@@ -2,10 +2,19 @@ var mysql = require("mysql");
 var request = require("request"); // You might need to npm install the request module!
 var expect = require("chai").expect;
 
-describe("Saves Data to persistant DB", () => {
+/************************************************************/
+// Mocha doesn't have a way to designate pending before blocks.
+// Mimic the behavior of xit and xdescribe with xbeforeEach.
+// Remove the 'x' from beforeEach block when working on
+// authentication tests.
+/************************************************************/
+let xbeforeEach = function () { };
+/************************************************************/
+
+describe("Saves to persistant DB:", function () {
   var dbConnection;
 
-  beforeEach((done) => {
+  beforeEach(function (done) {
     dbConnection = mysql.createConnection({
       user: "root",
       password: "",
@@ -17,7 +26,7 @@ describe("Saves Data to persistant DB", () => {
      * (or repeated runs of the tests) won't screw each other up: */
     dbConnection.query("truncate " + tablename, done);
   });
-  afterEach( () => {
+  afterEach( function () {
     dbConnection.end();
   });
 
@@ -111,52 +120,181 @@ describe("Saves Data to persistant DB", () => {
       });
     });
   });
-  //   it("Should output all users from the DB", function(done) {
-  //     let queryString = `SELECT * FROM user`;
-  //     var queryArgs = [];
+});
 
-  //     dbConnection.query(queryString, queryArgs, function(err) {
-  //       if (err) {
-  //         throw err;
-  //       }
 
-  //       // query the server and see if it returns the users inserted
-  //       request({
-  //         method: "GET",
-  //         uri: "http://localhost:3000/user/all"
-  //       });
-  //     });
-  //   });
+describe('Account Creation:', function () {
+  var dbConnection;
 
-  //   it("Should output all messages from the DB", function(done) {
-  //     // Let's insert a message into the db
-  //     var queryString =
-  //       'INSERT INTO messages (text, roomname, username) VALUES ("Men like you can never change!", "main", "Nick")';
-  //     var queryArgs = [];
-  //     // TODO - The exact query string and query args to use
-  //     // here depend on the schema you design, so I'll leave
-  //     // them up to you. */
+  beforeEach((done) => {
+    dbConnection = mysql.createConnection({
+      user: "root",
+      password: "",
+      database: "gda"
+    });
+    dbConnection.connect();
+    var tablename = "user"; // TODO: fill this out
+    /* Empty the db table before each test so that multiple tests
+     * (or repeated runs of the tests) won't screw each other up: */
+    dbConnection.query("truncate " + tablename, done);
+  });
+  afterEach( function () {
+    dbConnection.end();
+  });
 
-  //     dbConnection.query(queryString, queryArgs, function(err) {
-  //       if (err) {
-  //         throw err;
-  //       }
 
-  //       // Now query the Node chat server and see if it returns
-  //       // the message we just inserted:
-  //       request("http://127.0.0.1:3000/classes/messages", function(
-  //         error,
-  //         response,
-  //         body
-  //       ) {
-  //         var messageLog = JSON.parse(body);
-  //         console.log("***Test2***", messageLog);
-  //         expect(messageLog.results[0].text).to.equal(
-  //           "Men like you can never change!"
-  //         );
-  //         expect(messageLog.results[0].roomname).to.equal("main");
-  //         done();
-  //       });
-  //     });
-  //   });
+  it('Admin creates a new user record', function (done) {
+    let options = {
+      'method': 'POST',
+      'uri': 'http://localhost:3000/user/new',
+      'json': {
+        "email": "jstevens@gmail.com",
+        "password": "test1234",
+        "role": "Supervisor",
+        "first_name": "John",
+        "last_name": "Stevens",
+        "phone_number": "1234322345"
+       }
+    };
+
+    request(options, function (error, res, body) {
+      let queryString = 'SELECT * FROM user where email = "jstevens@gmail.com"';
+      dbConnection.query(queryString, function (err, rows) {
+        if (err) { done(err); }
+        let user = rows[0];
+        expect(user).to.exist;
+        expect(user.first_name).to.equal('John');
+        done();
+      });
+    });
+  });
+
+  xit('does not store the user\'s original text password', function (done) {
+    var options = {
+      'method': 'POST',
+      'uri': 'http://127.0.0.1:4568/signup',
+      'json': {
+        'username': 'Samantha',
+        'password': 'Samantha'
+      }
+    };
+
+    request(options, function (error, res, body) {
+      if (error) { return done(error); }
+      var queryString = 'SELECT password FROM users where username = "Samantha"';
+      db.query(queryString, function (err, rows) {
+        if (err) { return done(err); }
+        var user = rows[0];
+        expect(user.password).to.exist;
+        expect(user.password).to.not.equal('Samantha');
+        done();
+      });
+    });
+  });
+
+  xit('redirects to signup if the user already exists', function (done) {
+    var options = {
+      'method': 'POST',
+      'uri': 'http://127.0.0.1:4568/signup',
+      'json': {
+        'username': 'Samantha1',
+        'password': 'Samantha'
+      }
+    };
+
+    request(options, function (error, res, body) {
+      if (error) { return done(error); }
+      request(options, function (err, response, resBody) {
+        if (err) { return done(err); }
+        expect(response.headers.location).to.equal('/signup');
+        done();
+      });
+    });
+  });
+
+  xit('redirects to index after user is created', function (done) {
+    var options = {
+      'method': 'POST',
+      'uri': 'http://127.0.0.1:4568/signup',
+      'json': {
+        'username': 'Samantha',
+        'password': 'Samantha'
+      }
+    };
+
+    request(options, function (error, res, body) {
+      if (error) { return done(error); }
+      expect(res.headers.location).to.equal('/');
+      done();
+    });
+  });
+});
+
+describe('Account Login:', function () {
+
+  beforeEach(function (done) {
+    var options = {
+      'method': 'POST',
+      'uri': 'http://127.0.0.1:4568/signup',
+      'json': {
+        'username': 'Samantha',
+        'password': 'Samantha'
+      }
+    };
+
+    request(options, function (error, res, body) {
+      done(error);
+    });
+  });
+
+  xit('Logs in existing users', function (done) {
+    var options = {
+      'method': 'POST',
+      'uri': 'http://127.0.0.1:4568/login',
+      'json': {
+        'username': 'Samantha',
+        'password': 'Samantha'
+      }
+    };
+
+    request(options, function (error, res, body) {
+      if (error) { return done(error); }
+      expect(res.headers.location).to.equal('/');
+      done();
+    });
+  });
+
+  xit('Users that do not exist are kept on login page', function (done) {
+    var options = {
+      'method': 'POST',
+      'uri': 'http://127.0.0.1:4568/login',
+      'json': {
+        'username': 'Fred',
+        'password': 'Fred'
+      }
+    };
+
+    request(options, function (error, res, body) {
+      if (error) { return done(error); }
+      expect(res.headers.location).to.equal('/login');
+      done();
+    });
+  });
+
+  xit('Users that enter an incorrect password are kept on login page', function (done) {
+    var options = {
+      'method': 'POST',
+      'uri': 'http://127.0.0.1:4568/login',
+      'json': {
+        'username': 'Samantha',
+        'password': 'Alexander'
+      }
+    };
+
+    request(options, function (error, res, body) {
+      if (error) { return done(error); }
+      expect(res.headers.location).to.equal('/login');
+      done();
+    });
+  });
 });
