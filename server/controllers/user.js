@@ -1,4 +1,4 @@
-const { createUser, retrivePassword, deleteUser } = require("../model/user");
+const { createUser, retrivePassword, deleteUser, allUsers } = require("../model/user");
 const { encrypt, comparePassword } = require("../lib/bcrypt");
 
 exports.create_user = async (req, res) => {
@@ -51,7 +51,6 @@ exports.user_login = async (req, res) => {
 
 exports.delete_user = async (req, res) => {
   // delete user login
-
   let response = await deleteUser(Number(req.body.id));
   try {
     res.status(200).json({
@@ -68,3 +67,22 @@ exports.delete_user = async (req, res) => {
     });
   }
 };
+
+exports.get_users = async (req, res) => {
+  let users = await allUsers();
+  try {
+    res.status(200).json({
+      "status": {
+        error: false,
+        code: 200,
+        type: "sucess",
+        message: "Success",
+        data: users
+      }
+    });
+  }catch(err) {
+    res.status(500).json({
+      error: err
+    });
+  }
+}
