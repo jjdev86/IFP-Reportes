@@ -4,7 +4,7 @@
   "description": "this app allows church members to submit their weekly meeting reports",
   "main": "app.js",
   "scripts": {
-    "test": "npm run start",
+    "test": "mocha server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
     "start": "nodemon app.js"
   },
   "repository": {
@@ -30,9 +30,11 @@
   "dependencies": {
     "bcrypt": "^3.0.7",
     "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "morgan": "^1.9.1",
-    "mysql": "^2.17.1"
+    "mysql": "^2.17.1",
+    "request": "^2.88.0"
   }
 }
