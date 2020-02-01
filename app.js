@@ -7,7 +7,8 @@ const mysql = require("mysql");
 const util = require("util"); // enable native async
 
 const userRoutes = require("./server/routes/user");
-// const reportRoutes = require("./server/routes/reports");
+const reportRoutes = require("./server/routes/report");
+const grouptRoutes = require('./server/routes/group');
 
 const pool = mysql.createPool({
   connectionLimit: 10,
@@ -43,7 +44,8 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use("/user", userRoutes);
-// app.use("/reports", reportRoutes);
+app.use('/report', reportRoutes);
+app.use('/group', grouptRoutes)
 
 app.use((req, res, next) => {
   const error = new Error("Route Not found");
