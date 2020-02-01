@@ -32,7 +32,6 @@ pool.query = util.promisify(pool.query);
 const createUser = async user => {
   // insert records to db
   const query = `INSERT INTO User (email, password, role, first_name, last_name, phone_number) VALUES ("${user.email}", "${user.password}","${user.role}","${user.first_name}", "${user.last_name}", "${user.phone_number}")`;
-  console.log(query, `line 7`);
 
   const newUser = await pool.query(query);
   try {
@@ -43,7 +42,7 @@ const createUser = async user => {
 };
 
 const retrivePassword = async user => {
-  // get password from db
+
   // SELECT CONVERT(column USING utf8)
   const query = `SELECT CONVERT (password USING utf8) password from User
                   WHERE email = '${user.email}'`;

@@ -15,7 +15,7 @@ CREATE TABLE `User` (
 
 CREATE TABLE `Grupo` (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`group_name` varchar(30) NOT NULL,
+	`group_name` varchar(30) NOT NULL UNIQUE,
 	PRIMARY KEY (`id`)
 );
 

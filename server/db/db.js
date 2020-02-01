@@ -40,9 +40,9 @@ const createUser = async user => {
         const query = `INSERT INTO User (email, password, role, first_name, last_name, phone_number) VALUES ("${user.email}", "${hash}","${user.role}","${user.firstName}", "${user.lastName}", "${user.phoneNumber}")`;
         const newUser = await pool.query(query)
         return newUser;
-        
     }catch(err) {
-        console.log(err)
+        // console.log(err)
+        return err;
     }
 
 };
@@ -70,5 +70,6 @@ const validateUser = async user => {
 
 module.exports = {
     createUser,
-    validateUser
+    validateUser,
+    pool
 }
