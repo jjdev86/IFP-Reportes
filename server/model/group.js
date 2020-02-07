@@ -21,15 +21,23 @@ const pool = require("../db/db").pool;
 //     // }
 // };
 exports.createGroup = async group => {
-    let isPresent = await pool.query(`SELECT group_name FROM grupo WHERE group_name = "${group}"`);
-    
+    // try {
+    //     let isPresent = await pool.query(`SELECT group_name FROM grupo WHERE group_name = "${group}"`);
+    //     console.log(isPresent, `line 25 isPresent`)
+    //     if(isPresent[0].group_name) {
+            
+    //     }
+    // }catch(err) {
+
+    // }
+
   try {
     let query = `INSERT INTO grupo (group_name) VALUES("${group}")`;
     let response = await pool.query(query);
 
     return response;
   } catch (err) {
-      console.log(err)
+    //   console.log(err)
     return err;
   }
 };
