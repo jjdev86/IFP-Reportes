@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mysql = require("mysql");
 const util = require("util"); // enable native async
+const path = require('path');
 
 const userRoutes = require("./server/routes/user");
 const reportRoutes = require("./server/routes/report");
@@ -42,6 +43,8 @@ app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+console.log(path.join(__dirname + "/client/dist"))
+app.use(express.static(path.join(__dirname + "/client/dist")));
 
 app.use("/user", userRoutes);
 app.use('/report', reportRoutes);
