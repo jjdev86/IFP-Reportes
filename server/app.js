@@ -7,9 +7,9 @@ const mysql = require("mysql");
 const util = require("util"); // enable native async
 const path = require('path');
 
-const userRoutes = require("./server/routes/user");
-const reportRoutes = require("./server/routes/report");
-const grouptRoutes = require('./server/routes/group');
+const userRoutes = require("./routes/user");
+const reportRoutes = require("./routes/report");
+const grouptRoutes = require('./routes/group');
 
 const pool = mysql.createPool({
   connectionLimit: 10,
@@ -43,8 +43,8 @@ app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
-console.log(path.join(__dirname + "/client/dist"))
-app.use(express.static(path.join(__dirname + "/client/dist")));
+console.log(path.join(__dirname + "/../client/dist"))
+app.use(express.static(path.join(__dirname + "/../client/dist")));
 
 app.use("/user", userRoutes);
 app.use('/report', reportRoutes);

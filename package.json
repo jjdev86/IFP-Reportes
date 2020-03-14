@@ -2,7 +2,7 @@
   "name": "ifp-reportes",
   "version": "1.0.0",
   "description": "this app allows church members to submit their weekly meeting reports",
-  "main": "app.js",
+  "main": "server/app.js",
   "scripts": {
     "test": "mocha server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
     "start": "nodemon app.js",
